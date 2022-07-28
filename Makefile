@@ -19,8 +19,8 @@ DBT2_SOURCE := $(DDIR)/$(DBT2_NAME)
 PROPELLER_INTRA_OPTS := --propeller_chain_split=true  --propeller_call_chain_clustering=true --propeller_chain_split_threshold=256
 PROPELLER_INTER_OPTS := --propeller_chain_split=true --propeller_forward_jump_distance=2048 --propeller_backward_jump_distance=1400 --propeller_call_chain_clustering=true --propeller_chain_split_threshold=256 --propeller_inter_function_ordering=true
 
-common_compiler_flags := -DDBUG_OFF -O3 -DNDEBUG -Qunused-arguments -funique-internal-linkage-names -fuse-ld=lld
-common_linker_flags := -fuse-ld=lld -Wl,-z,keep-text-section-prefix -Wl,--build-id
+common_compiler_flags := -DDBUG_OFF -O3 -DNDEBUG -Qunused-arguments -funique-internal-linkage-names -fuse-ld=lld -mllvm -count-push-pop
+common_linker_flags := -fuse-ld=lld -Wl,-z,keep-text-section-prefix -Wl,--build-id -Wl,-mllvm -Wl,-count-push-pop
 
 gen_compiler_flags = -DCMAKE_C_FLAGS=$(1) -DCMAKE_CXX_FLAGS=$(1)
 gen_linker_flags   = -DCMAKE_EXE_LINKER_FLAGS=$(1) -DCMAKE_SHARED_LINKER_FLAGS=$(1) -DCMAKE_MODULE_LINKER_FLAGS=$(1)
@@ -112,7 +112,17 @@ pgolto-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profd
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
 
 pgolto-ipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
-	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin -Wl$(COMMA)-mllvm -Wl$(COMMA)-enable-ipra) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin -Wl$(COMMA)-mllvm -Wl$(COMMA)-enable-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
+pgolto-full-ipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
+	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full -Wl$(COMMA)-mllvm -Wl$(COMMA)-enable-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
+pgolto-full-fdoipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
+	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdo-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
+pgolto-full-ipra-fdoipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
+	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full  -Wl$(COMMA)-mllvm -Wl$(COMMA)-enable-ipra -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdo-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
 
 pgoltol-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=thin -fbasic-block-sections=labels,-flto=thin -Wl$(COMMA)--lto-basic-block-sections=labels) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")

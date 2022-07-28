@@ -1,5 +1,5 @@
 llvm/
-mysql-8.0.29/
+mysql-8.0.30/
 dbt2-0.37.50.16/
 vanilla-mysql/
 vanillaq-mysql/
@@ -11,6 +11,10 @@ pgo_instrument-mysql/
 pgolto-mysql/
 pgoltol-mysql/
 pgoltoq-mysql/
+pgolto-ipra-mysql/
+pgolto-full-ipra-mysql/
+pgolto-full-fdoipra-mysql/
+pgolto-full-ipra-fdoipra-mysql/
 pgolto_bolt-mysql/
 pgolto_propeller-mysql/
 pgolto_propeller_inter-mysql/
@@ -21,4 +25,4 @@ perf2bolt
 t-test
 build_create_llvm_prof.sh
 .vscode/
-packages/mysql-boost-8.0.29.tar.gz
+packages/mysql-boost-8.0.30.tar.gz
