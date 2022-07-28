@@ -1,6 +1,6 @@
-diff -r -U8 mysql-8.0.29.orig/cmake/build_configurations/compiler_options.cmake mysql-8.0.29/cmake/build_configurations/compiler_options.cmake
---- mysql-8.0.29.orig/cmake/build_configurations/compiler_options.cmake	2022-03-23 06:52:57.000000000 -0700
-+++ mysql-8.0.29/cmake/build_configurations/compiler_options.cmake	2022-06-23 11:26:45.240926187 -0700
+diff -r -U8 mysql-8.0.30.orig/cmake/build_configurations/compiler_options.cmake mysql-8.0.30/cmake/build_configurations/compiler_options.cmake
+--- mysql-8.0.30.orig/cmake/build_configurations/compiler_options.cmake	2022-03-23 06:52:57.000000000 -0700
++++ mysql-8.0.30/cmake/build_configurations/compiler_options.cmake	2022-06-23 11:26:45.240926187 -0700
 @@ -25,17 +25,19 @@
  INCLUDE(cmake/floating_point.cmake)
  
@@ -22,9 +22,9 @@ diff -r -U8 mysql-8.0.29.orig/cmake/build_configurations/compiler_options.cmake 
    IF(MY_COMPILER_IS_GNU)
      SET(COMMON_C_FLAGS               "-fno-omit-frame-pointer")
      # Disable inline optimizations for valgrind testing to avoid false positives
-diff -r -U8 mysql-8.0.29.orig/cmake/fprofile.cmake mysql-8.0.29/cmake/fprofile.cmake
---- mysql-8.0.29.orig/cmake/fprofile.cmake	2022-03-23 06:52:57.000000000 -0700
-+++ mysql-8.0.29/cmake/fprofile.cmake	2022-06-23 11:26:45.240926187 -0700
+diff -r -U8 mysql-8.0.30.orig/cmake/fprofile.cmake mysql-8.0.30/cmake/fprofile.cmake
+--- mysql-8.0.30.orig/cmake/fprofile.cmake	2022-03-23 06:52:57.000000000 -0700
++++ mysql-8.0.30/cmake/fprofile.cmake	2022-06-23 11:26:45.240926187 -0700
 @@ -90,31 +90,31 @@
  ELSE()
    SET(FPROFILE_DIR_DEFAULT "${CMAKE_BINARY_DIR}/../profile-data")
@@ -62,9 +62,9 @@ diff -r -U8 mysql-8.0.29.orig/cmake/fprofile.cmake mysql-8.0.29/cmake/fprofile.c
  
      # With -fprofile-use all portions of programs not executed during
      # train run are optimized agressively for size rather than speed.
-diff -r -U8 mysql-8.0.29.orig/cmake/libevent.cmake mysql-8.0.29/cmake/libevent.cmake
---- mysql-8.0.29.orig/cmake/libevent.cmake	2022-03-23 06:52:57.000000000 -0700
-+++ mysql-8.0.29/cmake/libevent.cmake	2022-06-23 11:26:57.801074024 -0700
+diff -r -U8 mysql-8.0.30.orig/cmake/libevent.cmake mysql-8.0.30/cmake/libevent.cmake
+--- mysql-8.0.30.orig/cmake/libevent.cmake	2022-03-23 06:52:57.000000000 -0700
++++ mysql-8.0.30/cmake/libevent.cmake	2022-06-23 11:26:57.801074024 -0700
 @@ -29,40 +29,40 @@
  SET(MIN_LIBEVENT_VERSION_REQUIRED "2.1")
  

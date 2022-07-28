@@ -10,8 +10,8 @@ SHELL := env PATH=$(PATH) /bin/bash -eux -o pipefail
 PROCESSOR_NUMBER := $(shell cat /proc/cpuinfo | grep -E "^processor\s+:\s+[0-9]+$$" | wc -l)
 PARALLEL_LINK_JOBS := $(shell echo $$(( $(PROCESSOR_NUMBER) / 3)))
 
-MYSQL_PACKAGE_NAME := mysql-boost-8.0.29.tar.gz
-MYSQL_NAME := mysql-8.0.29
+MYSQL_PACKAGE_NAME := mysql-boost-8.0.30.tar.gz
+MYSQL_NAME := mysql-8.0.30
 MYSQL_SOURCE := $(DDIR)/$(MYSQL_NAME)
 DBT2_NAME := dbt2-0.37.50.16
 DBT2_SOURCE := $(DDIR)/$(DBT2_NAME)
@@ -83,21 +83,21 @@ packages/$(MYSQL_PACKAGE_NAME):
 	echo "Please download $(MYSQL_PACKAGE_NAME) manually and put it under $(DDIR)/packages."
 	exit 1
 
-$(MYSQL_NAME)/README: packages/mysql-boost-8.0.29.tar.gz packages/mysql.patch
+$(MYSQL_NAME)/README: packages/$(MYSQL_PACKAGE_NAME) packages/mysql.patch
 	tar xzvf $<
 	cd "$(VARIANT_DIR)" ; patch -p1 < "$(DDIR)/$(lastword $^)"
 	touch $@
 
-vanilla-mysql/install/bin/mysqld: $(MYSQL_NAME)/README llvm/install/bin/clang++
+vanilla-mysql/install/bin/mysqld: $(MYSQL_NAME)/README $(LLVM_INSTALL_BIN)/clang++
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin))
 
-vanillaq-mysql/install/bin/mysqld: $(MYSQL_NAME)/README llvm/install/bin/clang++
+vanillaq-mysql/install/bin/mysqld: $(MYSQL_NAME)/README $(LLVM_INSTALL_BIN)/clang++
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin -Wl$(COMMA)-q))
 
-vanillal-mysql/install/bin/mysqld: $(MYSQL_NAME)/README llvm/install/bin/clang++
+vanillal-mysql/install/bin/mysqld: $(MYSQL_NAME)/README $(LLVM_INSTALL_BIN)/clang++
 	$(call build_mysql,$(call gen_build_flags,-flto=thin -fbasic-block-sections=labels,-flto=thin -Wl$(COMMA)--lto-basic-block-sections=labels))
 
-pgo_instrument-mysql/install/bin/mysqld: $(MYSQL_NAME)/README llvm/install/bin/clang++
+pgo_instrument-mysql/install/bin/mysqld: $(MYSQL_NAME)/README $(LLVM_INSTALL_BIN)/clang++
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin) -DFPROFILE_GENERATE=1 -DFPROFILE_DIR="$(VARIANT_DIR)/profile-data/%4m.profraw")
 
 # run_loadtest "$(DBT2_SOURCE)" "$(VARIANT_DIR)/loadtest_output" 90 $(VARIANT_DIR)/install/lib ;
