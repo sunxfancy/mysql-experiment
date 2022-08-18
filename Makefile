@@ -19,8 +19,8 @@ DBT2_SOURCE := $(DDIR)/$(DBT2_NAME)
 PROPELLER_INTRA_OPTS := --propeller_chain_split=true  --propeller_call_chain_clustering=true --propeller_chain_split_threshold=256
 PROPELLER_INTER_OPTS := --propeller_chain_split=true --propeller_forward_jump_distance=2048 --propeller_backward_jump_distance=1400 --propeller_call_chain_clustering=true --propeller_chain_split_threshold=256 --propeller_inter_function_ordering=true
 
-common_compiler_flags := -DDBUG_OFF -O3 -DNDEBUG -Qunused-arguments -funique-internal-linkage-names -fuse-ld=lld -mllvm -count-push-pop
-common_linker_flags := -fuse-ld=lld -Wl,-z,keep-text-section-prefix -Wl,--build-id -Wl,-mllvm -Wl,-count-push-pop
+common_compiler_flags := -DDBUG_OFF -O3 -DNDEBUG -Qunused-arguments -funique-internal-linkage-names -fuse-ld=lld 
+common_linker_flags := -fuse-ld=lld -Wl,-z,keep-text-section-prefix -Wl,--build-id 
 
 gen_compiler_flags = -DCMAKE_C_FLAGS=$(1) -DCMAKE_CXX_FLAGS=$(1)
 gen_linker_flags   = -DCMAKE_EXE_LINKER_FLAGS=$(1) -DCMAKE_SHARED_LINKER_FLAGS=$(1) -DCMAKE_MODULE_LINKER_FLAGS=$(1)
@@ -41,13 +41,13 @@ define build_mysql
                 -DCMAKE_INSTALL_PREFIX=$(VARIANT_DIR)/install \
                 -DCMAKE_LINKER="lld" \
                 -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_C_COMPILER="$(LLVM_INSTALL_BIN)/clang" \
-                -DCMAKE_CXX_COMPILER="$(LLVM_INSTALL_BIN)/clang++" \
+                -DCMAKE_C_COMPILER="$(LLVM_INSTALL_BIN)/clang-proxy" \
+                -DCMAKE_CXX_COMPILER="$(LLVM_INSTALL_BIN)/clang-proxy++" \
 		-DWITH_ROUTER=Off \
 		-DWITH_UNIT_TESTS=Off \
 		-DENABLED_PROFILING=Off \
                 $(1) \
-                $(MYSQL_SOURCE) && ninja install \
+                $(MYSQL_SOURCE) && CLANG_PROXY_FOCUS=mysqld CLANG_PROXY_ARGS="-Wl,-mllvm -Wl,-count-push-pop" time -o time.log ninja install -j $(shell nproc) -v > build.log \
 	|| { echo "*** build failed ***"; exit 1 ; }
 	touch $@
 endef
