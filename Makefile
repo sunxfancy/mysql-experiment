@@ -30,7 +30,7 @@ COMMA := ,
 
 # vanillaq is with -Wl,-q
 # vanillal is with labels section
-FLAVORS := vanilla vanillaq vanillal pgo_instrument pgolto pgolto_propeller pgolto_propeller_inter pgoltol pgoltoq vanilla_bolt vanilla_propeller vanilla_propeller_inter pgolto_bolt
+FLAVORS := vanilla vanillaq vanillal pgo_instrument pgolto pgolto-full pgolto-ipra pgolto-full-ipra pgolto-full-fdoipra  pgolto_propeller pgolto_propeller_inter pgoltol pgoltoq vanilla_bolt vanilla_propeller vanilla_propeller_inter pgolto_bolt
 
 include Makefile.bolt.inc
 
@@ -88,16 +88,16 @@ $(MYSQL_NAME)/README: packages/$(MYSQL_PACKAGE_NAME) packages/mysql.patch
 	cd "$(VARIANT_DIR)" ; patch -p1 < "$(DDIR)/$(lastword $^)"
 	touch $@
 
-vanilla-mysql/install/bin/mysqld: $(MYSQL_NAME)/README $(LLVM_INSTALL_BIN)/clang++
+vanilla-mysql/install/bin/mysqld: $(MYSQL_NAME)/README 
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin))
 
-vanillaq-mysql/install/bin/mysqld: $(MYSQL_NAME)/README $(LLVM_INSTALL_BIN)/clang++
+vanillaq-mysql/install/bin/mysqld: $(MYSQL_NAME)/README 
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin -Wl$(COMMA)-q))
 
-vanillal-mysql/install/bin/mysqld: $(MYSQL_NAME)/README $(LLVM_INSTALL_BIN)/clang++
+vanillal-mysql/install/bin/mysqld: $(MYSQL_NAME)/README 
 	$(call build_mysql,$(call gen_build_flags,-flto=thin -fbasic-block-sections=labels,-flto=thin -Wl$(COMMA)--lto-basic-block-sections=labels))
 
-pgo_instrument-mysql/install/bin/mysqld: $(MYSQL_NAME)/README $(LLVM_INSTALL_BIN)/clang++
+pgo_instrument-mysql/install/bin/mysqld: $(MYSQL_NAME)/README 
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin) -DFPROFILE_GENERATE=1 -DFPROFILE_DIR="$(VARIANT_DIR)/profile-data/%4m.profraw")
 
 # run_loadtest "$(DBT2_SOURCE)" "$(VARIANT_DIR)/loadtest_output" 90 $(VARIANT_DIR)/install/lib ;
@@ -110,6 +110,9 @@ pgo_instrument-mysql/profile-data/default.profdata: pgo_instrument-mysql/setup
 
 pgolto-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
+pgolto-full-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
+	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
 
 pgolto-ipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin -Wl$(COMMA)-mllvm -Wl$(COMMA)-enable-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
