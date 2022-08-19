@@ -197,7 +197,8 @@ function run_sysbench_benchmark() {
   for bn in "${benchmarks[@]}"; do
     rm -f "${mysql_dir}/sysbench.${bn}.result"
     for i in $(seq 1 "$iterations") ; do
-      sed -nEe 's!^\s+transactions:\s+.*\((.*) per sec\.\)$!\1!p' ${mysql_dir}/sysbench_runfiles/"${bn}"."${i}".log >> "${mysql_dir}/sysbench.${bn}.result"
+      sed -nEe 's!^\s+transactions:\s+.*\((.*) per sec\.\)$!\1!p' ${mysql_dir}/sysbench_runfiles/"${bn}"."${i}".log >> "${mysql_dir}/sysbench.${bn}.transPerSec"
+      sed -nEe 's!^\s+total time:\s+(.*)s$!\1!p' ${mysql_dir}/sysbench_runfiles/"${bn}"."${i}".log >> "${mysql_dir}/sysbench.${bn}.time"
     done
   done
 }
