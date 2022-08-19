@@ -111,11 +111,14 @@ pgo_instrument-mysql/profile-data/default.profdata: pgo_instrument-mysql/setup
 pgolto-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
 
-pgolto-full-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
-	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
-
 pgolto-ipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin -Wl$(COMMA)-mllvm -Wl$(COMMA)-enable-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
+pgolto-fdoipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
+	$(call build_mysql,$(call gen_build_flags,-flto=thin,-flto=thin -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdo-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
+pgolto-full-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
+	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
 
 pgolto-full-ipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full -Wl$(COMMA)-mllvm -Wl$(COMMA)-enable-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
