@@ -12,6 +12,8 @@ pgolto-mysql/
 pgoltol-mysql/
 pgoltoq-mysql/
 pgolto-ipra-mysql/
+pgolto-fdoipra-mysql/
+pgolto-full-mysql/
 pgolto-full-ipra-mysql/
 pgolto-full-fdoipra-mysql/
 pgolto-full-ipra-fdoipra-mysql/
