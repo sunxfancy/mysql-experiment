@@ -30,7 +30,7 @@ COMMA := ,
 
 # vanillaq is with -Wl,-q
 # vanillal is with labels section
-FLAVORS := vanilla vanillaq vanillal pgo_instrument pgolto pgolto-full pgolto-ipra pgolto-full-ipra pgolto-full-fdoipra  pgolto_propeller pgolto_propeller_inter pgoltol pgoltoq vanilla_bolt vanilla_propeller vanilla_propeller_inter pgolto_bolt
+FLAVORS := vanilla vanillaq vanillal pgo_instrument pgolto pgolto-full pgolto-ipra pgolto-full-ipra pgolto-fdoipra pgolto-full-fdoipra  pgolto_propeller pgolto_propeller_inter pgoltol pgoltoq vanilla_bolt vanilla_propeller vanilla_propeller_inter pgolto_bolt
 
 include Makefile.bolt.inc
 
