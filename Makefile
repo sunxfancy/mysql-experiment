@@ -38,16 +38,17 @@ define build_mysql
 	mkdir -p $(VARIANT_DIR)/build
 	cd $(VARIANT_DIR)/build && cmake -G Ninja \
 		-DWITH_BOOST=$(MYSQL_SOURCE)/boost/boost_1_77_0 \
-                -DCMAKE_INSTALL_PREFIX=$(VARIANT_DIR)/install \
-                -DCMAKE_LINKER="lld" \
-                -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_C_COMPILER="$(LLVM_INSTALL_BIN)/clang-proxy" \
-                -DCMAKE_CXX_COMPILER="$(LLVM_INSTALL_BIN)/clang-proxy++" \
+		-DCMAKE_INSTALL_PREFIX=$(VARIANT_DIR)/install \
+		-DCMAKE_LINKER="lld" \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DWITH_LTO=OFF \
+		-DCMAKE_C_COMPILER="$(LLVM_INSTALL_BIN)/clang-proxy" \
+		-DCMAKE_CXX_COMPILER="$(LLVM_INSTALL_BIN)/clang-proxy++" \
 		-DWITH_ROUTER=Off \
 		-DWITH_UNIT_TESTS=Off \
 		-DENABLED_PROFILING=Off \
-                $(1) \
-                $(MYSQL_SOURCE) && CLANG_PROXY_FOCUS=mysqld CLANG_PROXY_ARGS="-Wl,-mllvm -Wl,-count-push-pop" time -o time.log ninja install -j $(shell nproc) -v > build.log \
+		$(1) \
+		$(MYSQL_SOURCE) && CLANG_PROXY_FOCUS=mysqld CLANG_PROXY_ARGS="-Wl,-mllvm -Wl,-count-push-pop" time -o time.log ninja install -j $(shell nproc) -v > build.log \
 	|| { echo "*** build failed ***"; exit 1 ; }
 	touch $@
 endef
