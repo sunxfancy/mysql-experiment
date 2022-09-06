@@ -30,7 +30,7 @@ COMMA := ,
 
 # vanillaq is with -Wl,-q
 # vanillal is with labels section
-FLAVORS := vanilla vanillaq vanillal pgo_instrument pgolto pgolto-full pgolto-ipra pgolto-full-ipra pgolto-fdoipra pgolto-full-fdoipra  pgolto_propeller pgolto_propeller_inter pgoltol pgoltoq vanilla_bolt vanilla_propeller vanilla_propeller_inter pgolto_bolt
+FLAVORS := vanilla vanillaq vanillal pgo_instrument pgolto pgolto-full pgolto-ipra pgolto-full-ipra pgolto-fdoipra pgolto-full-fdoipra pgolto-full-fdoipra2 pgolto-full-fdoipra3 pgolto_propeller pgolto_propeller_inter pgoltol pgoltoq vanilla_bolt vanilla_propeller vanilla_propeller_inter pgolto_bolt
 
 include Makefile.bolt.inc
 
@@ -127,9 +127,14 @@ pgolto-full-ipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/def
 pgolto-full-fdoipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdo-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
 
+pgolto-full-fdoipra2-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
+	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdo-ipra -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdoipra-ch=1 -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
+pgolto-full-fdoipra3-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
+	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdo-ipra -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdoipra-ch=1 -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdoipra-hc=1 -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
+
 pgolto-full-ipra-fdoipra-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=full,-flto=full  -Wl$(COMMA)-mllvm -Wl$(COMMA)-enable-ipra -Wl$(COMMA)-mllvm -Wl$(COMMA)-fdo-ipra -Wl$(COMMA)-Bsymbolic-non-weak-functions) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
-
 
 pgoltol-mysql/install/bin/mysqld: pgo_instrument-mysql/profile-data/default.profdata
 	$(call build_mysql,$(call gen_build_flags,-flto=thin -fbasic-block-sections=labels,-flto=thin -Wl$(COMMA)--lto-basic-block-sections=labels) -DFPROFILE_USE=1 -DFPROFILE_DIR="$(DDIR)/$<")
